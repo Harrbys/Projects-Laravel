@@ -1,0 +1,40 @@
+--crear un projecto de laravel desde ubuntu desde la carpeta--
+composer create-project --prefer-dist laravel/laravel project-inventarioV1 
+--crear un controlador--
+php artisan make:controller ProductController
+--generar modelo y migration--
+php artisan make:model Product -m
+--generar jobs--
+php artisan make:job SendEmail
+--generar middleware--
+php artisan make:middleware CheckAge
+--acceder a mi DB local--
+psql -U postgres -d project -h 127.0.0.1 -p 5432 //newpassword
+-- especificar que migracion correr--
+php artisan migrate --path=/database/migrations/2025_02_06_210159_clientes_table.php
+
+----------------------------------------------
+Migrate de mi DB
+
+php artisan make:migration created_productos_table
+php artisan make:migration created_categoria_table
+php artisan make:migration created_producto_categoria_table
+php artisan make:migration proveedores_table
+php artisan make:migration empresas_table
+php artisan make:migration ventas_table
+php artisan make:migration cliente_table
+
+
+crear el modelo y migration a la vez
+
+php artisan make:model productos -m
+php artisan make:model categorias -m
+php artisan make:model prodcuto_categoria -m
+php artisan make:model proveedores -m
+php artisan make:model empresas -m
+php artisan make:model ventas -m
+php artisan make:model clientes -m
+php artisan make:model producto_ventas -m
+
+--------------------------------------------------------
+
