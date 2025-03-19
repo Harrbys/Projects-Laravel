@@ -169,7 +169,7 @@ class ClientesController extends Controller
                     'success' => false,
                     'message' => 'Error, Cliente no encontrado',
                     'data' => ['id' => ['No se encontró un cliente con el ID proporcionado.']]
-                ], 404);
+                ], 400);
             }
         
             try {
