@@ -8,6 +8,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductosCatController;
 use App\Http\Controllers\ProductosChecksController;
 use App\Http\Controllers\ProveedoresController;
+use App\Models\productos_check;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -37,6 +38,8 @@ Route::get('empleado/index', [EmpleadosController::class, 'index']);
 Route::get('empleado/show/{id}', [EmpleadosController::class, 'show']);
 Route::get('cliente/index', [ClientesController::class, 'index']);
 Route::get('cliente/show/{id}', [ClientesController::class, 'show']);
+Route::get('productoschecks/index', [productos_check::class, 'index']);
+Route::get('productoschecks/show/{id}', [productos_check::class, 'show']);
 
 Route::get('/vista', [ProductController::class, 'vista']);
 
@@ -72,6 +75,10 @@ Route::post('producto_checks/destroy/{id}', [ProductosChecksController::class, '
 Route::post('cliente/store', [ClientesController::class, 'store']);
 Route::post('cliente/update', [ClientesController::class, 'update']);
 Route::post('cliente/destroy/{id}', [ClientesController::class, 'destroy']);
+
+Route::post('productoschecks/store', [productos_check::class, 'store']);
+Route::post('productoschecks/update', [productos_check::class, 'update']);
+Route::post('productoschecks/destroy/{id}', [productos_check::class, 'destroy']);
 
 Route::middleware('auth:sanctum')->group(function () {
 });
