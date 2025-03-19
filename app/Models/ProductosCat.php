@@ -14,4 +14,14 @@ class ProductosCat extends Model
         'producto_id',
         'categoria_id'
     ];
+
+    public function producto()
+    {
+        return $this->belongsTo(productos::class, 'producto_id');
+    }
+
+    public function categoria()
+    {
+        return $this->belongsTo(categorias::class, 'categoria_id');
+    }
 }
