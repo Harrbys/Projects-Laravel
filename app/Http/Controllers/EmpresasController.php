@@ -11,10 +11,39 @@ use Illuminate\Support\Facades\Validator;
 
 class EmpresasController extends Controller
 {
+
+    /**
+     * Funcion para visualizar todos los registros de empresas.
+     * Author: Santiago Hoyos Baquero
+     * Date: 2025-03-19
+     * @param  \Illuminate\Http\Request  request
+     * @return \Illuminate\Http\Response
+     */
     public function index()
     {
         return empresa::all();
     }
+
+    /**
+     * Funcion para buscar una empresa especifica.
+     * Author: Santiago Hoyos Baquero
+     * Date: 2025-03-19
+     * @param  \Illuminate\Http\Request  request
+     * @return \Illuminate\Http\Response
+     */
+    
+    public function show($id)
+    {
+        return empresa::find($id);
+    }
+
+    /**
+     * Funcion para crear un registro de una empresa.
+     * Author: Santiago Hoyos Baquero
+     * Date: 2025-03-19
+     * @param  \Illuminate\Http\Request  request
+     * @return \Illuminate\Http\Response
+     */
 
     public function store(Request $request)
     {
@@ -65,14 +94,16 @@ class EmpresasController extends Controller
 
     }
 
-    public function show($id)
-    {
-        return empresa::find($id);
-    }
+    /**
+     * Funcion para midificar un registro de una empresa.
+     * Author: Santiago Hoyos Baquero
+     * Date: 2025-03-19
+     * @param  \Illuminate\Http\Request  request
+     * @return \Illuminate\Http\Response
+     */
 
     public function update(Request $request)
     {
-        try{
 
             $rules = [
                 'codigo' => 'required',
@@ -84,42 +115,86 @@ class EmpresasController extends Controller
             $validator = Validator::make($request->all(), $rules);
     
             if ($validator->fails()) {
-                return response()->json($validator->errors(), 400);
-            }else{
-                $data = $request->all();
-                $empresa = empresa::where('codigo', $request->codigo)->first();
-                $empresa->update($data);
                 return response()->json([
-                    'succes' => True,
-                    'message' => 'Empresa registrada exitosamente',
-                    'data' => $data
+                    'succes' => false,
+                    'message' => 'Error de validacion',
+                    'errors' => $validator->errors()
+                ], 400);
+            }
+            $empresaexist = empresa::where('codigo',$request->codigo)->first();
+
+            if($empresaexist == null){
+                Log::info('Error la empresa no se encontro', ['Codigo' => $request->codigo]);
+                return response()->json([
+                    'succes' => false,
+                    'message' => 'Error, Empresa no encontrada',
+                    'erorrs' => ['codigo'=> ['No se encontro el codigo de la empresa']]
+                ], 400);
+            }
+
+            try{
+
+                $empresaexist->update([
+                    'nombre' => $request->nombre ?? $empresaexist->nombre,
+                    'direccion' => $request->direccion ?? $empresaexist->direccion,
+                    'telefono' => $request->telefono ?? $empresaexist->telefono
                 ]);
-            }
-        }catch(Exception $e){
-            Log::error('Error en la capa 8' . $e->getMessage());
-            return response()->json([
-                'succes' => false,
-                'message' => 'Error en la capa 8 sino en el codigo'
-            ], 500);
-        }
-    }
 
+                return response()->json([ 
+                    'succes' => true,
+                    'message' => 'Empresa modificada exitosamente',
+                    'data' => $empresaexist
+                ]);
 
-    public function destroy($id)
-    {
-        try{
-            $empresa = empresa::find($id);
-            if(!$empresa){
-                return response()->json("No se encontro la empresa para eliminarla", 400);    
+            }catch (\Exception $e){
+                Log::error('Error al modificar la empresa: ' .
+                $e->getmessage());
+                return response()->json([
+                    'succes' => false,
+                    'message' => 'Error interno al modificar la empresa',
+                    'error' => $e->getMessage()
+                ], 400);
             }
-            $empresa->delete();
-            return response()->json("Empresa eliminada exitosamente", 200);
-        }catch(Exception $e){
-            Log::error('Error en la capa 8' . $e->getMessage());
-            return response()->json([
-                'succes' => false,
-                'message' => 'Error en la capa 8 sino en el codigo'
-            ], 500);
+
         }
-    }
+
+    /**
+     * Funcion para elinminar un registro de una empresa.
+     * Author: Santiago Hoyos Baquero
+     * Date: 2025-03-19
+     * @param  \Illuminate\Http\Request  request
+     * @return \Illuminate\Http\Response
+     */
+
+        public function destroy($id){
+            
+            $empresaxist = empresa::find($id);
+            if ($empresaxist == null) {
+                Log::info('Error: empresa no encontrado', ['id' => $id]);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error, empresa no encontrado',
+                    'errors' => ['id' => ['No se encontró un empresa con el ID proporcionado.']]
+                ], 404);
+            }
+        
+            try {
+                
+                $empresaxist->delete();
+        
+                return response()->json([
+                    'success' => true,
+                    'message' => 'empresa eliminado exitosamente',
+                    'data' => $empresaxist 
+                ], 200);
+        
+            } catch (\Exception $e) {
+                Log::error('Error al eliminar el empresa: ' . $e->getMessage());
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error interno al eliminar el empresa',
+                    'error' => $e->getMessage()
+                ], 500); 
+            }
+        }
 }

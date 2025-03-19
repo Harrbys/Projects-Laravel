@@ -17,4 +17,9 @@ class proveedores extends Model
         'telefono',
         'empresa_id'
     ];
+
+    public function productos()
+    {
+        return $this->hasMany(productos::class, 'proveedores_id');
+    }
 }

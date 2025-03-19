@@ -24,4 +24,9 @@ class productos extends Model
         return $this->belongsToMany(productos_check::class, 'intermedia_checks');
     }
 
+    public function proveedor()
+    {
+        return $this->belongsTo(proveedores::class, 'proveedores_id');
+    }
+
 }
